@@ -35,14 +35,14 @@ app.get("/contacts", async (request: Request, response: Response) => {
   await conn.end();
 });
 
-app.post("/auth/register", async (request: Request, response: Response) => {
-  const conn = await mysql.createConnection(access);
-  console.log(request.body);
+app.post("/auth/register", (request: Request, response: Response) => {
   bcrypt.hash(request.body.password, 10, async function (err, hash) {
-    const result = await conn.execute(`INSERT INTO users (email, role, password_hash) VALUES (${request.body.email}, ${request.body.role}, ${hash});`)
-  })
+    const conn = await mysql.createConnection(access);
+    console.log(request.body);
+    const result = await conn.execute(`INSERT INTO users (email, role, password_hash) VALUES ('${request.body.email}', '${request.body.role}', '${hash}');`)
+    await conn.end();
+  });
   response.status(200);
-  await conn.end();
 });
 
 app.listen(PORT, () => { 
